@@ -1,33 +1,26 @@
 from flask import Flask, jsonify
 import random
-from pymongo import MongoClient
-import tools.mongotools as mongo 
+import tools.sqltools as sql 
 import json
-
-# mongo.all_sentences()
-# mongo.inserting()
+import pandas as pd
 
 app = Flask(__name__)
 
 @app.route("/")
 def greeting ():
-    return f"How are you doing"
+    return f"Hi! How are you doing?"
 
-@app.route("/line/<name>")
-def all_from_mongo(name):
-    lines = mongo.all_sentences(name)
-    return jsonify(lines)
+# Get everything: SQL
+@app.route("/all")
+def all_reviews ():
+    return jsonify(sql.get_everything())
 
-@app.route("/random-number")
-def random_number ():
-    return str(random.choice(range(0,11)))
+# Get everything from 1 disney branch: SQL
+@app.route("/branch/<branch_name>")
+def all_from_branch ():
+    return jsonify(sql.get_everything_from_branch())
 
-@app.route("/campus/<location>")
-def campus_location (location):
-    if location == "bcn":
-        return "Carrer Pamplona 96"
-    elif location == "mad":
-        return "Paseo de la chopera, 14"
-
-if __name__ == '__main__':
-    app.run(debug=True)
+#this will check that the name is the meain
+if __name__ == '__main__': 
+    app.run(port=3306, debug=True)
+    # debug= True/False, when you change something it updatescle
