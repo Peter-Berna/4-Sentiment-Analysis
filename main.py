@@ -95,6 +95,59 @@ def rating():
 # get avg. polarity score specifying branch, reviewer location, year, month
 @app.route("/sentiment/<branch>/<country>/<year>/<month>")
 def get_sentiment_branch_country_year_month(branch, country, year, month):
+    sese = jsonify(sql.get_sentiment_branch_country_year_month(branch, country, year, month)) 
+    all = sese.get_json()
+    df = pd.DataFrame.from_dict(all)
+    nltk.downloader.download('vader_lexicon')
+    sia = SentimentIntensityAnalyzer()
+    
+    def sa(x):
+        try:
+            return sia.polarity_scores(x)
+        except:
+            return x
+
+    df["polarity_score"] = df["Review_Text"].apply(sa)
+    sentiment=[]
+
+    for i in df["polarity_score"]:
+            sentiment.append(i["compound"])
+
+    polarity = round(st.mean(sentiment),4)
+    
+    return f"The polarity score is {polarity} for reviews from users from {country} that went to {branch} in {month}, {year}"
+
+# Get polarity score for one random review
+@app.route("/sentiment/random")
+def get_sentiment_one_random():
+    df = sql.get_random_review()
+    nltk.downloader.download('vader_lexicon')
+    sia = SentimentIntensityAnalyzer()
+
+    def sa(x):
+        try:
+            return sia.polarity_scores(x)
+        except:
+            return x
+
+    df["polarity_score"] = df["Review_Text"].apply(sa)
+
+    return jsonify(df.to_dict(orient='records'))
+
+# POST a new entry into the DB 
+@app.route("/post", methods=['POST'])
+def insert_review ():
+
+    id = request.form.get("id")
+    rating = request.form.get("rating")
+    year_date= request.form.get("year_date")
+    country = request.form.get("country")
+    review = request.form.get("quote_order")
+    Branch = request.form.get("Branch")
+    Year = request.form.get("Year")
+    Month = request.form.get("Month")
+
+    return sql.new_review(id, rating, year_date, country, review, Branch, Year, Month)
 
 
 #this will check that the name is the meain

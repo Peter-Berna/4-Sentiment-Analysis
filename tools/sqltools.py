@@ -1,5 +1,6 @@
 from config.sqlconfig import engine
 import pandas as pd
+import random
 
 ## GET
 def get_everything():
@@ -73,12 +74,21 @@ def get_year_branch_rating():
     df=pd.read_sql_query(query,con=engine)
     return df.to_dict(orient='records')
 
-    ## POST
-def new_message (scene, character_name, dialogue):
+# GET SENTIMENT
 
-    engine.execute(f"""
-    INSERT INTO users (scene, character_name, dialogue)
-    VALUES ({scene}, '{character_name}', '{dialogue}');
-    """)
-    
-    return f"Correctly introduced: {scene} {character_name} {dialogue}"
+def get_sentiment_branch_country_year_month(branch, country, year, month):
+    query = (f"""SELECT * FROM disneyland_reviews WHERE Branch = '{branch}' AND Reviewer_Location = '{country}' AND Year = '{year}' and Month = '{month}';""")
+    df=pd.read_sql_query(query,con=engine)
+    return df.to_dict(orient='records')
+
+def get_random_review():
+    query = (f"""SELECT Review_Text FROM disneyland_reviews""")
+    df=pd.read_sql_query(query,con=engine)
+    index = random.choice(range(0, 42655))
+    return df.iloc[[index]]
+
+## POST
+def new_review(id, rating, year_date, country, review, Branch, Year, Month):
+    engine.execute(f""" INSERT INTO disney.disneyland_reviews (Review_ID, Rating, Year_Month, Reviewer_Location, Review_Text, Branch, Year, Month)
+    VALUES ({id}, '{rating}', '{year_date}', '{country}', '{review}', '{Branch}', '{Year}', '{Month}');""")
+    return f"Correctly introduced: {id}, {rating}, {year_date}, {country}, {review}, {Branch}, {Year}, {Month}"
