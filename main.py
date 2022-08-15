@@ -1,9 +1,16 @@
 from tokenize import Name
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import random
 import tools.sqltools as sql 
 import json
 import pandas as pd
+from os import name
+import markdown.extensions.fenced_code
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.corpus import stopwords
+import statistics as st
+
 
 app = Flask(__name__)
 
@@ -63,12 +70,12 @@ def all_reviews_one_country(country):
     result["0"] = note
     return jsonify(result)
 
-# Get 3 dictionaries:
+# Get summary stats visitors (3 dictionaries):
 ## 1. Visitors & Avg. Rating per branch
 ## 2. Visitors per Month
 ## 3. Visitors per Country
-@app.route("/summary_stats")
-def summary_stats():
+@app.route("/summary_visitors")
+def summary_stats_visitors():
     visitors_rating = sql.get_visitors_rating_branch()
     month = sql.get_visitors_month()
     country = sql.get_visitor_country()
@@ -79,6 +86,15 @@ def summary_stats():
     }
     return jsonify(result)
 
+# Get avg. rating per year and branch
+@app.route("/rating")
+def rating():
+    return jsonify(sql.get_year_branch_rating())
+
+## SENTIMENTS HELL YEAH!
+# get avg. polarity score specifying branch, reviewer location, year, month
+@app.route("/sentiment/<branch>/<country>/<year>/<month>")
+def get_sentiment_branch_country_year_month(branch, country, year, month):
 
 
 #this will check that the name is the meain

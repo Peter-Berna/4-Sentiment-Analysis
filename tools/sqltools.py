@@ -64,6 +64,15 @@ def get_visitor_country():
     df=pd.read_sql_query(query,con=engine)
     return df.to_dict(orient='records')
 
+def get_year_branch_rating():
+    query = (f"""SELECT DISTINCT Year, Branch, AVG(Rating) as 'Avg. Rating'
+    FROM disneyland_reviews
+    WHERE Year IS NOT NULL
+    GROUP BY Year, Branch
+    ORDER BY Year ASC;""")
+    df=pd.read_sql_query(query,con=engine)
+    return df.to_dict(orient='records')
+
     ## POST
 def new_message (scene, character_name, dialogue):
 
