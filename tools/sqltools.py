@@ -23,21 +23,46 @@ def get_total_reviews():
     return df.to_dict(orient='records')
 
 def get_all_reviewer_location():
-    query = (f"""SELECT DISTINCT Reviewer_Location FROM disneyland_reviews""")
+    query = (f"""SELECT DISTINCT Reviewer_Location FROM disneyland_reviews;""")
     df=pd.read_sql_query(query,con=engine)
     return df.to_dict()
 
 def get_total_one_country(country):
     country = f'"{country}"'
-    query = (f"""SELECT COUNT(Review_text) as 'Total reviews from {country}' FROM disneyland_reviews WHERE Reviewer_Location = {country}""")
+    query = (f"""SELECT COUNT(Review_text) as 'Total reviews from {country}' FROM disneyland_reviews WHERE Reviewer_Location = {country};""")
     df=pd.read_sql_query(query,con=engine)
     return df.to_dict(orient='records')
 
 def get_reviews_one_country(country):
     country = f'"{country}"'
-    query = (f"""SELECT Review_Text FROM disneyland_reviews WHERE Reviewer_Location = {country}""")
+    query = (f"""SELECT Review_Text FROM disneyland_reviews WHERE Reviewer_Location = {country};""")
     df=pd.read_sql_query(query,con=engine)
     return df.to_dict()
+
+def get_visitors_rating_branch():
+    query = (f"""SELECT Branch, COUNT(Review_ID) as 'Total Visitors', AVG(Rating) as 'Avg. Rating'
+    FROM disneyland_reviews
+    GROUP BY Branch
+    ORDER BY COUNT(Review_ID) DESC;""")
+    df=pd.read_sql_query(query,con=engine)
+    return df.to_dict(orient='records')
+
+def get_visitors_month():
+    query = (f"""SELECT Month, COUNT(Review_ID) AS 'Visitors'
+    FROM disneyland_reviews
+    WHERE Month IS NOT NULL
+    GROUP BY Month
+    ORDER BY STR_TO_DATE(CONCAT('0001 ', Month, ' 01'), '%%Y %%M %%d');""")
+    df=pd.read_sql_query(query,con=engine)
+    return df.to_dict(orient='records')
+
+def get_visitor_country():
+    query = (f"""SELECT DISTINCT Reviewer_Location as 'Country', COUNT(Review_ID) AS 'Visitors'
+    FROM disneyland_reviews
+    GROUP BY Reviewer_Location
+    ORDER BY COUNT(Review_ID) DESC;""")
+    df=pd.read_sql_query(query,con=engine)
+    return df.to_dict(orient='records')
 
     ## POST
 def new_message (scene, character_name, dialogue):

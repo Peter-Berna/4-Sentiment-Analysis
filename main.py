@@ -50,16 +50,35 @@ def all_locations ():
     result["0"] = note
     return jsonify(result)
 
+# Get total reviews from one country
 @app.route("/total/<country>")
 def total_one_country (country):
     return jsonify(sql.get_total_one_country(country))
 
+# Get all review texts from one country
 @app.route("/all/reviews/<country>")
 def all_reviews_one_country(country):
     note = f"These are all the reviews of visitors from {country}"
     result = sql.get_reviews_one_country(country)
     result["0"] = note
     return jsonify(result)
+
+# Get 3 dictionaries:
+## 1. Visitors & Avg. Rating per branch
+## 2. Visitors per Month
+## 3. Visitors per Country
+@app.route("/summary_stats")
+def summary_stats():
+    visitors_rating = sql.get_visitors_rating_branch()
+    month = sql.get_visitors_month()
+    country = sql.get_visitor_country()
+    result = {
+        "Visitors & Avg. Rating per branch": visitors_rating,
+        "Visitors per Month": month,
+        "Visitors per Country": country
+    }
+    return jsonify(result)
+
 
 
 #this will check that the name is the meain
