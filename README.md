@@ -1,7 +1,7 @@
 # Project IV Sentiment Analysis API
 ## API - SQL query for Disneyland Reviews
 
-![Screenshot](https://github.com/Peter-Berna/4-Sentiment-Analysis/blob/main/images/disneyland_disney.gif
+<img width="63%" src="https://github.com/Peter-Berna/4-Sentiment-Analysis/blob/main/images/disneyland_disney.gif">
 ________________________________________________
 
 ## 1 - Main Endpoint page for the API query:
