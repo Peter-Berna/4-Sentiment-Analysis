@@ -14,17 +14,12 @@ import statistics as st
 
 app = Flask(__name__)
 
-@app.route("/")
-def greeting ():
-    return f"Hi! How are you doing?"
-
-#SUBSTITUTE GREETING BY 
 # GET: render markdown
-# @app.route("/")
-# def index():
-    # readme_file = open("README.md", "r")
-    # md_template = markdown.markdown(readme_file.read(), extensions = ["fenced_code"])
-    # return md_template
+@app.route("/")
+def index():
+    readme_file = open("README.md", "r")
+    md_template = markdown.markdown(readme_file.read(), extensions = ["fenced_code"])
+    return md_template
 
 # Get everything: SQL
 @app.route("/all")
